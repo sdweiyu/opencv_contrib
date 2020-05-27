@@ -360,6 +360,17 @@ icvGetTodoBlocks(Mat& sampled_img, Mat& sampling_mask, std::vector< std::tuple< 
                         xblock_offset = 1;
                     }
 
+                    int new_xblock_counter = xblock_counter_quadernary + xblock_offset;
+                    int new_yblock_counter = yblock_counter_quadernary + yblock_offset;
+                    if (new_xblock_counter >= divUp(img_width, block_size))
+                    {
+                        new_xblock_counter--;
+                    }
+                    if (new_yblock_counter >= divUp(img_height, block_size))
+                    {
+                        new_yblock_counter--;
+                    }
+
                     set_later.emplace_back(xblock_counter_quadernary + xblock_offset, yblock_counter_quadernary + yblock_offset);
                 }
 
@@ -433,8 +444,8 @@ icvDetermineProcessingOrder(
     int border_width = 0;
     while (block_size >= block_size_min)
     {
-        int blocks_per_column = cvCeil(img_height / block_size);
-        int blocks_per_line = cvCeil(img_width / block_size);
+        int blocks_per_column = divUp(img_height, block_size);
+        int blocks_per_line = divUp(img_width, block_size);
         Mat nen_array = Mat::zeros(blocks_per_column, blocks_per_line, CV_64F);
         Mat proc_array = Mat::zeros(blocks_per_column, blocks_per_line, CV_64F);
         Mat sigma_n_array = Mat::zeros(blocks_per_column, blocks_per_line, CV_64F);
